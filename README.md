@@ -6,12 +6,11 @@
   </div>
 
   <p>An Interactive UI for the Women in Tech Unimelb</p>
-    <a href="https://dezoomcamp.streamlit.app/" target="_blank">Visit App</a>
-    🌌
+
 </div>
 <br>
 <div align="center">
-      <a href="https://dezoomcamp.streamlit.app/"><img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg"/></a>
+     
 </div>
 
 <hr>
