@@ -5,6 +5,12 @@ from sklearn.linear_model import LinearRegression
 import numpy as np
 from rapidfuzz import process, fuzz
 
+from collections import Counter
+from sklearn.feature_extraction.text import TfidfVectorizer
+from nltk.corpus import stopwords
+import nltk
+
+
 st.set_page_config(
     page_title="My App",  # Change this to your app title
     page_icon="🔭",  # Optional: Set an emoji or image as favicon
@@ -157,6 +163,10 @@ st.subheader(f"📋 Basic stats from {selected_event}", )
 #     df["Event Rating"] = pd.to_numeric(df["Event Rating"], errors="coerce")
 #     st.metric("Average Event Rating", round(df["Event Rating"].mean(), 2))
 
+
+# df_processed = process_data()
+average_rating = round(df["Event Rating"].mean(), 2)
+
 # Define colored box template
 def colored_box(label, value, color):
     return f"""
@@ -170,15 +180,62 @@ col1, col2, col3, col4 = st.columns(4)
 
 # Display each metric with a colored box
 with col1:
-    st.markdown(colored_box("Total Events", event_rating, "#3498db"), unsafe_allow_html=True)
-with col2:
-    st.markdown(colored_box("Highest Rating", highest_rating, "#2ecc71"), unsafe_allow_html=True)
-with col3:
-    st.markdown(colored_box("Lowest Rating", lowest_rating, "#e74c3c"), unsafe_allow_html=True)
-with col4:
-    st.markdown(colored_box("Average Rating", average_rating, "#f39c12"), unsafe_allow_html=True)
+    st.markdown(colored_box("Average Rating", average_rating, "#3498db"), unsafe_allow_html=True)
+# with col2:
+#     st.markdown(colored_box("Highest Rating", highest_rating, "#2ecc71"), unsafe_allow_html=True)
+# with col3:
+#     st.markdown(colored_box("Lowest Rating", lowest_rating, "#e74c3c"), unsafe_allow_html=True)
+# with col4:
+#     st.markdown(colored_box("Average Rating", average_rating, "#f39c12"), unsafe_allow_html=True)
 # Average Rating
 
+# ------------------------------------------------------------------------------------------*/
+# NATURAL LANGUAGE PROCESSING ON COMMENTS
+
+nltk.download("stopwords")
+
+# Sample feedback data (Replace this with actual data from your spreadsheet)
+feedback_list = [
+    "The panelist’s insights were very helpful.",
+    "When the panelists were talking HAHAHA, I enjoyed it!",
+    "I loved the QA part!",
+    "Hearing about the panelists' experiences in getting internships was valuable.",
+    "The networking session after lectures was my favorite part!",
+    "The questions were well-organized, saving time for discussion.",
+    "I really enjoyed the experience and the insights the panelists provided."
+]
+
+# Preprocess feedback: Lowercase, remove stopwords
+stop_words = set(stopwords.words("english"))
+cleaned_feedback = [" ".join([word for word in feedback.lower().split() if word not in stop_words])
+                    for feedback in feedback_list]
+
+# Extract keywords using TF-IDF
+vectorizer = TfidfVectorizer(max_features=10, stop_words="english")  # Extract top 10 keywords
+X = vectorizer.fit_transform(cleaned_feedback)
+keywords = vectorizer.get_feature_names_out()
+
+# Count most common words
+word_counts = Counter(" ".join(cleaned_feedback).split())
+common_words = word_counts.most_common(5)  # Top 5 words
+
+# Summarize key themes
+summary_points = [
+    "🔹 Panelists' insights were highly valued.",
+    "🔹 The QA session was engaging and helpful.",
+    "🔹 The networking session after the event was a highlight.",
+    "🔹 Many attendees appreciated the structured and organized flow of discussions.",
+    "🔹 Humor and interaction with panelists made the session enjoyable."
+]
+
+# Display results in Streamlit
+st.subheader("📌 Key Insights from Feedback")
+for point in summary_points:
+    st.write(point)
+
+# Show extracted keywords
+st.subheader("🔍 Commonly Mentioned Topics")
+st.write(", ".join(keywords))
 
 
 
