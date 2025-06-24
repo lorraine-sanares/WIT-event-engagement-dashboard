@@ -54,6 +54,7 @@ st.title("Welcome to the WIT Event Engagement Dashboard!")
 google_forms_data = load_forms_spreadsheets()
 humanitix_data = load_humanitix_spreadsheets()
 
+# Process the data to get the main dataframe
 df_processed = process_data()
 
 st.title("💻 WIT Event Engagement")
